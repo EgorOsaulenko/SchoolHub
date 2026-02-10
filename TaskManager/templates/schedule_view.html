@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% load permissions %}
+
+{% block content %}
+<form action="{% url 'schedule_view_filtered' %}" method="post">
+    {% csrf_token %}
+    <p>
+        <input type="text" name="day" placeholder="Введіть назву дня тижня">
+    </p>
+    <p>
+        <input type="text" name="study" placeholder="Введіть номер класу">
+    </p>
+    <button class="btn btn-warning" type="submit">Вибрати</button>
+</form>
+
+{% if schedule %}
+<table>
+    <thead>
+        <tr>
+            <th>Приміщення</th>
+            <th>URL на онлайн-урок</th>
+            <th>День тижня</th>
+            <th>Номер уроку</th>
+            <th>Клас</th>
+            <th>Предмет</th>
+            {% if request.user|has_permission:"CS" %}
+              <th>Дії</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in schedule %}
+        <tr>
+            <td>{{ item.resource }}</td>
+            <td>{{ item.meet_url }}</td>
+            <td>{{ item.day }}</td>
+            <td>{{ item.number }}</td>
+            <td>{{ item.study }}</td>
+            <td>{{ item.subject }}</td>
+            {% if request.user|has_permission:"CS" %}
+            <td>
+                <p>
+                    <a href="{% url 'edit_schedule' id=item.id %}" class="btn btn-warning">Оновити</a>
+                </p>
+                <p>
+                    <a href="{% url 'delete_schedule' id=item.id %}" class="btn btn-danger">Видалити</a>
+                </p>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock content %}

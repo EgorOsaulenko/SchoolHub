@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Бронювальник</th>
+            <th>Кабінет</th>
+            <th>Дата/час початку</th>
+            <th>Дата/час закінчення</th>
+            <th>Статус</th>
+            <th>Дата/час бронювання</th>
+            <th>Опис</th>
+            <th>Повідомлення адміна</th>
+            <th>Дія</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in booking %}
+        <tr>
+            <td>{{ forloop.index }}</td>
+            <td>{{ book.user }}</td>
+            <td>{{ book.resource }}</td>
+            <td>{{ book.start_time }}</td>
+            <td>{{ book.end_time }}</td>
+            <td>{{ book.status }}</td>
+            <td>{{ book.created_at }}</td>
+            <td>{{ book.description }}</td>
+            <td>{{ book.reason }}</td>
+            <td>
+                <a href="{% url 'update_book' id=book.id %}" class="btn btn-warning">Змінити</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Вхід{% endblock title %}
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="badge text-bg-info">Вхід</button>
+</form>
+{% endblock content %}

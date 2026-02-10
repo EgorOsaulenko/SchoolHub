@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Профіль{% endblock title %}
+{% block content %}
+<h1>Тут Ви можете змінити інформацію про себе.</h1>
+{% if request.user.profile.avatar %}
+<img src="{{ MEDIA_URL }}{{ request.user.profile.avatar }}" alt="Аватарка" height="150px">
+{% endif %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ user_form.as_p }}
+    {{ profile_form.as_p }}
+    <button class="btn btn-primary" type="submit">Оновити</button>
+</form>
+{% endblock content %}

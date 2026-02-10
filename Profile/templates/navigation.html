@@ -1,0 +1,42 @@
+{% load permissions %}
+
+{% with request.resolver_match.url_name as url_name %}
+<li class="nav-item">
+        <a class="nav-link {% if url_name == 'index' %} active {% endif %}" aria-current="true" href="{% url 'index' %}">SchoolHUB</a>
+</li>
+{% if request.user.is_authenticated %}
+<li class="nav-item">
+    <a class="nav-link {% if url_name == 'profile' %} active {% endif %}" aria-current="true" href="{% url 'profile' %}">Профіль</a>
+</li>
+{% if request.user|has_permission:"CB" %}
+<li class="nav-item">
+    <a class="nav-link {% if url_name == 'create_book' %} active {% endif %}" aria-current="true" href="{% url 'create_book' %}">Забронювати кабінет</a>
+</li>
+{% endif %}
+{% if request.user|has_permission:"RB" %}
+<li class="nav-item">
+    <a class="nav-link {% if url_name == 'resource' %} active {% endif %}" aria-current="true" href="{% url 'resource' %}">Список бронювань</a>
+</li>
+{% endif %}
+{% if request.user|has_permission:"RS" %}
+<li class="nav-item">
+    <a class="nav-link {% if url_name == 'schedule_view' %} active {% endif %}" aria-current="true" href="{% url 'schedule_view' %}">Розклад</a>
+</li>
+{% endif %}
+{% if request.user|has_permission:"CS" %}
+<li class="nav-item">
+    <a class="nav-link {% if url_name == 'add_schedule' %} active {% endif %}" aria-current="true" href="{% url 'add_schedule' %}">Додати заняття</a>
+</li>
+{% endif %}
+<li class="nav-item">
+    <a class="nav-link {% if url_name == 'logout_view' %} active {% endif %}" aria-current="true" href="{% url 'logout_view' %}">Вихід</a>
+</li>
+{% else %}
+<li class="nav-item">
+    <a class="nav-link {% if url_name == 'sign_in' %} active {% endif %}" aria-current="true" href="{% url 'sign_in' %}">Вхід</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if url_name == 'sign_up' %} active {% endif %}" aria-current="true" href="{% url 'sign_up' %}">Зареєструватись</a>
+</li>
+{% endif %}
+{% endwith %}
