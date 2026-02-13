@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Список комп'ютерів{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Ігрові місця</h2>
+
+    {% if request.user.is_staff %}
+    <div class="text-center mb-3">
+        <a href="{% url 'booking_list' %}" class="btn btn-warning">Переглянути заявки на бронювання</a>
+    </div>
+    {% endif %}
+    
+    <div class="d-flex justify-content-center gap-2 mb-4">
+        <button class="btn btn-primary filter-btn" data-filter="all">Всі</button>
+        {% for zone in zones %}
+        <button class="btn btn-outline-primary filter-btn" data-filter="{{ zone.name }}">{{ zone.name }}</button>
+        {% endfor %}
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for computer in computers %}
+        <div class="col computer-card" data-zone="{{ computer.zone.name }}">
+            <div class="card h-100 shadow-sm text-center">
+                <div class="card-header bg-transparent">
+                    <h5 class="card-title mb-0">{{ computer.name }}</h5>
+                </div>
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <p class="card-text text-muted">Зона: {{ computer.zone }}</p>
+                    
+                    <div id="status-container-{{ computer.id }}">
+                        {% if computer.active_session %}
+                            <div class="alert alert-info py-2 mb-3">
+                                <small class="d-block text-muted">Гравець:</small>
+                                <strong>{{ computer.active_session.user.username }}</strong>
+                                <hr class="my-1">
+                                <small>Тариф: {{ computer.active_session.tariff.name }}</small><br>
+                                <small>Початок: {{ computer.active_session.start_time|date:"H:i" }}</small>
+                            </div>
+                            {% if request.user.is_staff %}
+                                <a href="{% url 'stop_session' computer.active_session.id %}" class="btn btn-danger w-100 mt-auto">Завершити сесію</a>
+                            {% endif %}
+                        {% else %}
+                            <div class="mb-3">
+                                {% if computer.status == "FR" %}
+                                    <span class="badge rounded-pill text-bg-success px-3 py-2">Вільний</span>
+                                {% else %}
+                                    <span class="badge rounded-pill text-bg-danger px-3 py-2">{{ computer.get_status_display }}</span>
+                                {% endif %}
+                            </div>
+                            {% if computer.status == "FR" %}
+                                {% if request.user.is_staff %}
+                                    <a href="{% url 'start_session' computer.id %}" class="btn btn-primary w-100 mt-auto">Відкрити сесію</a>
+                                {% else %}
+                                    <a href="{% url 'booking' computer.id %}" class="btn btn-success w-100 mt-auto">Забронювати</a>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted">Комп'ютери ще не додані.</div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="{% static 'TaskManager/js/computer_list_filter.js' %}"></script>
+<div id="computer-list-meta" data-has-permission="{{ request.user.is_staff|yesno:'true,false' }}" data-api-url="{% url 'computer_status_api' %}"></div>
+<script src="{% static 'TaskManager/js/computer_list_update.js' %}"></script>
+{% endblock content %}

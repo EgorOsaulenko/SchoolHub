@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-Інформація про наступне заняття та де воно буде.
+<div class="text-center mt-5">
+    <h1>Ласкаво просимо до CyberClub!</h1>
+    <p class="lead">Найпотужніші ПК, топові ігри та атмосфера кіберспорту.</p>
+    <hr class="my-4">
+    <p>Перевіряй вільні місця та бронюй ігрову станцію прямо зараз.</p>
+    <a class="btn btn-primary btn-lg" href="{% url 'computer_list' %}" role="button">Обрати комп'ютер</a>
+</div>
 {% endblock content %}

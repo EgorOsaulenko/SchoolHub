@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бронювання місця</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; padding: 2rem; background: #121212; color: #e0e0e0; }
+        .container { max-width: 400px; margin: 0 auto; background: #1e1e1e; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        h2 { margin-top: 0; color: #fff; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: #aaa; }
+        select, input { width: 100%; padding: 0.75rem; border-radius: 4px; border: 1px solid #333; background: #2d2d2d; color: #fff; box-sizing: border-box; }
+        button { width: 100%; padding: 0.75rem; background: #198754; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 1rem; }
+        button:hover { background: #157347; }
+        .cancel { display: block; text-align: center; margin-top: 1rem; color: #666; text-decoration: none; font-size: 0.9rem; }
+        .cancel:hover { color: #888; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Бронювання</h2>
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="computer">Комп'ютер:</label>
+                <select name="computer" id="computer" required>
+                    {% for c in computers %}
+                    <option value="{{ c.id }}" {% if selected_computer and c.id == selected_computer.id %}selected{% endif %}>
+                        {{ c.name }} {% if c.status != 'FR' %}(Зайнятий){% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="time">Час початку:</label>
+                <input type="datetime-local" name="time" id="time" required>
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Тривалість (годин):</label>
+                <input type="number" name="duration" id="duration" min="1" max="12" value="1" required>
+            </div>
+
+            <button type="submit">Підтвердити бронювання</button>
+            <a href="{% url 'computer_list' %}" class="cancel">Скасувати</a>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Вхід{% endblock title %}
+{% block title %}Вхід у клуб{% endblock title %}
 {% block content %}
+<h2 class="mb-3">Авторизація</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button class="badge text-bg-info">Вхід</button>
+    <button class="btn btn-primary">Увійти</button>
 </form>
 {% endblock content %}

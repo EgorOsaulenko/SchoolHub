@@ -1,18 +1,11 @@
 from django import forms
 
-from .models import Status, Action, Booking
-from Resource.models import Resource
+from .models import Status, Booking
 
 
 class StatusForm(forms.ModelForm):
     class Meta:
         model = Status
-        fields = "__all__"
-
-
-class ActionForm(forms.ModelForm):
-    class Meta:
-        model = Action
         fields = "__all__"
 
 

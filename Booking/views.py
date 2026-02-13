@@ -8,8 +8,9 @@ from django.contrib.auth.models import User
 
 from .forms import BookingFormAdmin, BookingFormUser
 from Profile.models import Position, Action
-from .models import Booking, Status, Action as ActionLog, BookingLog
+from .models import Booking, Status, BookingLog
 from .permissions import has_permission
+from TaskManager.models import Computer
 
 # Create your views here.
 
@@ -22,13 +23,13 @@ def create_book(request: HttpRequest):
 
 
         if Booking.objects.filter(
-            resource=book.resource,
+            computer=book.computer,
             end_time__gt=book.start_time,
             status=Status.objects.filter(name="Busy").first()
         ).exists():
 
-            messages.error(request, "Даний кабінет ще зайнятий")
-            return redirect("resource")
+            messages.error(request, "Даний комп'ютер вже заброньовано на цей час")
+            return redirect("computer_list")
         
         # if book.start_time < datetime.now() or book.end_time <= datetime.now():
         #     messages.error(request, "Дата початку має бути не раніше поточної дати та часу, а завершення - більше поточної дати та часу")
@@ -37,26 +38,44 @@ def create_book(request: HttpRequest):
         book.user = request.user
         book.status = Status.objects.filter(name="Waiting").first()
         book.save()
+        
+        if book.computer:
+            book.computer.status = Computer.StatusChoice.BOOKED
+            book.computer.save()
 
-        BookingLog.objects.create(booking=book, user=request.user, action=ActionLog.objects.filter(name="Забронював").first())
-        messages.success(request, "Кабінет заброньовано. Очікуйте підтвердження від адміністратора")
-        return redirect("resource")
+        BookingLog.objects.create(booking=book, user=request.user, action="Створив бронювання")
+        messages.success(request, "Комп'ютер заброньовано. Очікуйте підтвердження від адміністратора")
+        return redirect("computer_list")
     return render(request, "booking_user.html", dict(form=form))
 
-@has_permission("UB")
+@has_permission("MB")
 @login_required
 def update_book(request: HttpRequest, id: int):
     book = Booking.objects.get(pk=id)
     form = BookingFormAdmin(data=request.POST or None, instance=book)
     if form.is_valid():
-        form.save()
-        name = "Підтвердив" if form.cleaned_data["status"] == Status.objects.filter(name="Busy").first() else "Відхилив"
-        BookingLog.objects.create(booking=book, user=request.user, action=ActionLog.objects.filter(name=name).first())
+        saved_book = form.save()
+        
+        if saved_book.status and saved_book.status.name == "Busy":
+            if saved_book.computer:
+                saved_book.computer.status = Computer.StatusChoice.BOOKED
+                saved_book.computer.save()
+            name = "Підтвердив"
+        else:
+            if saved_book.computer:
+                saved_book.computer.status = Computer.StatusChoice.FREE
+                saved_book.computer.save()
+            name = "Відхилив"
+
+        BookingLog.objects.create(booking=saved_book, user=request.user, action=name)
         messages.success(request, "Інформацію оновлено")
         return redirect("resource")
     return render(request, "booking_admin.html", dict(form=form, book=book))
 
-@has_permission("RB")
+@has_permission("MB")
 @login_required
 def resources(request: HttpRequest):
-    return render(request, "resource.html", dict(booking=Booking.objects.all()))
+    bookings = Booking.objects.select_related('computer', 'status', 'user').all().order_by('-id')
+    if not request.user.is_staff:
+        bookings = bookings.filter(user=request.user)
+    return render(request, "resource.html", dict(booking=bookings))

@@ -2,7 +2,8 @@
 
 {% block title %}Профіль{% endblock title %}
 {% block content %}
-<h1>Тут Ви можете змінити інформацію про себе.</h1>
+<h1>Особистий кабінет геймера</h1>
+<h3 class="text-success">Ваш баланс: {{ request.user.profile.balance }} грн</h3>
 {% if request.user.profile.avatar %}
 <img src="{{ MEDIA_URL }}{{ request.user.profile.avatar }}" alt="Аватарка" height="150px">
 {% endif %}

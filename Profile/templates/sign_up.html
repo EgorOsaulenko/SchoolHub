@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Реєстрація{% endblock title %}
+{% block title %}Реєстрація в клубі{% endblock title %}
 {% block content %}
+<h2 class="mb-3">Стати учасником клубу</h2>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ sign_up_form.as_p }}
     {{ profile_form.as_p }}
-    <button class="badge text-bg-info">Зареєструватись</button>
+    <button class="btn btn-success">Створити акаунт</button>
 </form>
 {% endblock content %}

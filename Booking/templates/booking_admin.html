@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Бронювання кабінету</h1>
+<h1>Бронювання комп'ютера {{ book.computer.name }}</h1>
 <form method="post">
     {% csrf_token %}
     {{ form.as_div }}

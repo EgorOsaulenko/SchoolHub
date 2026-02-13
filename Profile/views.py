@@ -1,12 +1,16 @@
+import locale
+from datetime import datetime
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.http import HttpRequest
+from django.db.models import Q
 
-from .models import Profile, Action, Position, Subject
-from .forms import UserForm, UserFormEdit, SignInForm, ActionForm, SubjectForm, ProfileForm, PositionForm
+from .models import Profile, Position, Action
+from .forms import UserForm, UserFormEdit, SignInForm, ActionForm, ProfileForm, PositionForm
 
 # Create your views here.
 
