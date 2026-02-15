@@ -1,31 +1,15 @@
 {% load permissions %}
-
 {% with request.resolver_match.url_name as url_name %}
-<li class="nav-item">
-        <a class="nav-link {% if url_name == 'index' %} active {% endif %}" aria-current="true" href="{% url 'index' %}">CyberClub</a>
-</li>
+<a href="{% url 'index' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'index' %}active{% endif %}">Головна</a>
 {% if request.user.is_authenticated %}
-<li class="nav-item">
-    <a class="nav-link {% if url_name == 'profile' %} active {% endif %}" aria-current="true" href="{% url 'profile' %}">Профіль</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if url_name == 'create_book' %} active {% endif %}" aria-current="true" href="{% url 'create_book' %}">Забронювати ПК</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if url_name == 'resource' %} active {% endif %}" aria-current="true" href="{% url 'resource' %}">Мої бронювання</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if url_name == 'computer_list' %} active {% endif %}" aria-current="true" href="{% url 'computer_list' %}">Комп'ютери</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if url_name == 'logout_view' %} active {% endif %}" aria-current="true" href="{% url 'logout_view' %}">Вихід</a>
-</li>
+<a href="{% url 'profile' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'profile' %}active{% endif %}">Профіль</a>
+<a href="{% url 'create_book' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'create_book' %}active{% endif %}">Забронювати</a>
+<a href="{% url 'resource' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'resource' %}active{% endif %}">Мої бронювання</a>
+<a href="{% url 'computer_list' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'computer_list' %}active{% endif %}">Комп'ютери</a>
+<a href="{% url 'statistics' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'statistics' %}active{% endif %}">Статистика</a>
+<a href="{% url 'logout_view' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 text-red-400/80 hover:text-red-400">Вихід</a>
 {% else %}
-<li class="nav-item">
-    <a class="nav-link {% if url_name == 'sign_in' %} active {% endif %}" aria-current="true" href="{% url 'sign_in' %}">Вхід</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if url_name == 'sign_up' %} active {% endif %}" aria-current="true" href="{% url 'sign_up' %}">Зареєструватись</a>
-</li>
+<a href="{% url 'sign_in' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'sign_in' %}active{% endif %}">Вхід</a>
+<a href="{% url 'sign_up' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'sign_up' %}active{% endif %}">Реєстрація</a>
 {% endif %}
 {% endwith %}

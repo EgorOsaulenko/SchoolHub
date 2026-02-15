@@ -1,18 +1,37 @@
 {% extends "base.html" %}
 
+{% block title %}SchoolHub · Редагувати бронювання{% endblock title %}
+
 {% block content %}
-<h1>Бронювання комп'ютера {{ book.computer.name }}</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_div }}
-    <div>
-        <label>Час початку бронювання</label>
-        <p>{{ book.start_time }}</p>
+<div class="max-w-2xl mx-auto fade-in">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold tracking-tight text-white brand-font mb-2">Редагувати бронювання</h1>
+        <p class="text-[var(--muted)] text-sm">{{ book.computer.name }} · {{ book.start_time|date:"d.m.Y H:i" }}</p>
     </div>
-    <div>
-        <label>Час завершення бронювання</label>
-        <p>{{ book.end_time }}</p>
+
+    <div class="hud-panel neon-border rounded-xl p-8">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            <div class="rounded-lg bg-black/30 p-4 mb-6 border-l-2 border-[#ff6600] space-y-2">
+                <div class="text-sm text-[var(--muted)]">Час початку: <span class="text-white">{{ book.start_time|date:"d.m.Y H:i" }}</span></div>
+                <div class="text-sm text-[var(--muted)]">Час закінчення: <span class="text-white">{{ book.end_time|date:"d.m.Y H:i" }}</span></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for field in form %}
+                <div>
+                    <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">{{ field.label }}</label>
+                    <div class="cyber-input rounded-lg w-full overflow-hidden">
+                        {{ field }}
+                    </div>
+                    {% if field.errors %}<p class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="pt-6 flex gap-4">
+                <button type="submit" class="cyber-btn px-8 py-3 rounded-lg font-semibold">Зберегти</button>
+                <a href="{% url 'resource' %}" class="px-8 py-3 rounded-lg font-semibold border border-white/20 text-white hover:bg-white/5 transition-colors">Скасувати</a>
+            </div>
+        </form>
     </div>
-    <button type="submit" class="btn btn-primary">Зберегти</button>
-</form>
+</div>
 {% endblock content %}

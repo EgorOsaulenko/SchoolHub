@@ -2,55 +2,68 @@
 
 {% load permissions %}
 
-{% block content %}
-<form action="{% url 'schedule_view_filtered' %}" method="post">
-    {% csrf_token %}
-    <p>
-        <input type="text" name="day" placeholder="Введіть назву дня тижня">
-    </p>
-    <p>
-        <input type="text" name="study" placeholder="Введіть номер класу">
-    </p>
-    <button class="btn btn-warning" type="submit">Вибрати</button>
-</form>
+{% block title %}SchoolHub · Розклад{% endblock title %}
 
-{% if schedule %}
-<table>
-    <thead>
-        <tr>
-            <th>Приміщення</th>
-            <th>URL на онлайн-урок</th>
-            <th>День тижня</th>
-            <th>Номер уроку</th>
-            <th>Клас</th>
-            <th>Предмет</th>
-            {% if request.user|has_permission:"CS" %}
-              <th>Дії</th>
-            {% endif %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in schedule %}
-        <tr>
-            <td>{{ item.resource }}</td>
-            <td>{{ item.meet_url }}</td>
-            <td>{{ item.day }}</td>
-            <td>{{ item.number }}</td>
-            <td>{{ item.study }}</td>
-            <td>{{ item.subject }}</td>
-            {% if request.user|has_permission:"CS" %}
-            <td>
-                <p>
-                    <a href="{% url 'edit_schedule' id=item.id %}" class="btn btn-warning">Оновити</a>
-                </p>
-                <p>
-                    <a href="{% url 'delete_schedule' id=item.id %}" class="btn btn-danger">Видалити</a>
-                </p>
-            </td>
-            {% endif %}
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% endif %}
+{% block content %}
+<div class="max-w-5xl mx-auto fade-in">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold tracking-tight text-white brand-font mb-2">Розклад</h1>
+        <p class="text-[var(--muted)] text-sm">Фільтр за днем тижня та класом</p>
+    </div>
+
+    <div class="hud-panel neon-border rounded-xl p-6 mb-8">
+        <form action="{% url 'schedule_view_filtered' %}" method="post" class="flex flex-wrap gap-4 items-end">
+            {% csrf_token %}
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">День тижня</label>
+                <input type="text" name="day" class="cyber-input w-full rounded-lg px-4 py-3 bg-black/50" placeholder="Наприклад: Понеділок">
+            </div>
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">Номер класу</label>
+                <input type="text" name="study" class="cyber-input w-full rounded-lg px-4 py-3 bg-black/50" placeholder="Наприклад: 10">
+            </div>
+            <button type="submit" class="cyber-btn px-6 py-3 rounded-lg font-semibold">Вибрати</button>
+        </form>
+    </div>
+
+    {% if schedule %}
+    <div class="hud-panel neon-border rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead>
+                    <tr class="text-[#ff6600] text-xs uppercase tracking-wider border-b border-white/10 bg-black/30">
+                        <th class="p-4">Приміщення</th>
+                        <th class="p-4">URL на онлайн-урок</th>
+                        <th class="p-4">День тижня</th>
+                        <th class="p-4">Номер уроку</th>
+                        <th class="p-4">Клас</th>
+                        <th class="p-4">Предмет</th>
+                        {% if request.user|has_permission:"CS" %}
+                        <th class="p-4 text-right">Дії</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in schedule %}
+                    <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                        <td class="p-4 text-white">{{ item.resource }}</td>
+                        <td class="p-4 text-[var(--muted)] max-w-xs truncate">{{ item.meet_url|default:"—" }}</td>
+                        <td class="p-4">{{ item.day }}</td>
+                        <td class="p-4">{{ item.number }}</td>
+                        <td class="p-4">{{ item.study }}</td>
+                        <td class="p-4">{{ item.subject }}</td>
+                        {% if request.user|has_permission:"CS" %}
+                        <td class="p-4 text-right space-x-2">
+                            <a href="{% url 'edit_schedule' id=item.id %}" class="cyber-btn px-4 py-1.5 rounded text-xs font-semibold">Оновити</a>
+                            <a href="{% url 'delete_schedule' id=item.id %}" class="px-4 py-1.5 rounded text-xs font-semibold border border-red-500/50 text-red-400 hover:bg-red-500 hover:text-black transition-all">Видалити</a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
 {% endblock content %}

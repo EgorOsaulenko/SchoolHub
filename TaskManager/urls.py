@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
@@ -11,4 +12,5 @@ urlpatterns = [
     path('booking/<int:computer_id>/', views.booking_view, name='booking'),
     path('booking/list/', views.booking_list_view, name='booking_list'),
     path('booking/manage/<int:booking_id>/<str:action>/', views.booking_manage, name='booking_manage'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]

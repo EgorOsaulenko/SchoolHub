@@ -29,6 +29,8 @@ class Computer(models.Model):
     name = models.CharField(max_length=50, verbose_name="Номер/Назва ПК")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, verbose_name="Ігрова зона")
     ip_address = models.GenericIPAddressField(verbose_name="IP адреса", null=True, blank=True)
+    x_pos = models.FloatField(default=0, verbose_name="Позиція X (%)", help_text="Відступ зліва у відсотках")
+    y_pos = models.FloatField(default=0, verbose_name="Позиція Y (%)", help_text="Відступ зверху у відсотках")
     status = models.CharField(max_length=2, choices=StatusChoice.choices, default=StatusChoice.FREE, verbose_name="Статус")
 
     def __str__(self):

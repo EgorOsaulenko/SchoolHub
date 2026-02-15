@@ -1,9 +1,31 @@
 {% extends "base.html" %}
 
+{% block title %}SchoolHub · Додати розклад{% endblock title %}
+
 {% block content %}
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Зберегти</button>
-</form>
+<div class="max-w-2xl mx-auto fade-in">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold tracking-tight text-white brand-font mb-2">Додати запис до розкладу</h1>
+    </div>
+
+    <div class="hud-panel neon-border rounded-xl p-8">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for field in form %}
+                <div>
+                    <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">{{ field.label }}</label>
+                    <div class="cyber-input rounded-lg w-full overflow-hidden">
+                        {{ field }}
+                    </div>
+                    {% if field.errors %}<p class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="pt-6">
+                <button type="submit" class="cyber-btn px-8 py-3 rounded-lg font-semibold">Зберегти</button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock content %}

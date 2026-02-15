@@ -1,45 +1,47 @@
 {% extends "base.html" %}
 
-{% block title %}Заявки на бронювання{% endblock title %}
+{% block title %}SchoolHub · Заявки на бронювання{% endblock title %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="mb-4 text-white">Заявки на бронювання</h2>
-    
-    {% if bookings %}
-    <div class="table-responsive">
-        <table class="table table-dark table-hover">
+<div class="max-w-5xl mx-auto fade-in">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <h1 class="text-3xl font-bold tracking-tight text-white brand-font">Вхідні заявки</h1>
+        <div class="flex gap-4">
+            <a href="{% url 'profile' %}" class="text-[var(--muted)] hover:text-[#ff6600] text-sm transition-colors">Профіль</a>
+            <a href="{% url 'computer_list' %}" class="text-[var(--muted)] hover:text-[#ff6600] text-sm transition-colors">Повернутися</a>
+        </div>
+    </div>
+
+    <div class="hud-panel neon-border rounded-xl overflow-hidden">
+        <table class="w-full text-left text-sm">
             <thead>
-                <tr>
-                    <th>Гравець</th>
-                    <th>Комп'ютер</th>
-                    <th>Час початку</th>
-                    <th>Тривалість</th>
-                    <th>Дії</th>
+                <tr class="text-[#ff6600] text-xs uppercase tracking-wider border-b border-white/10 bg-black/30">
+                    <th class="p-4">Час</th>
+                    <th class="p-4">Користувач</th>
+                    <th class="p-4">Система</th>
+                    <th class="p-4">Тривалість</th>
+                    <th class="p-4 text-right">Дія</th>
                 </tr>
             </thead>
             <tbody>
                 {% for booking in bookings %}
-                <tr>
-                    <td>{{ booking.user.username }}</td>
-                    <td>{{ booking.computer.name }}</td>
-                    <td>{{ booking.start_time|date:"d.m.Y H:i" }}</td>
-                    <td>{{ booking.duration }} год.</td>
-                    <td>
-                        <div class="btn-group" role="group">
-                            <a href="{% url 'booking_manage' booking.id 'approve' %}" class="btn btn-success btn-sm">Підтвердити</a>
-                            <a href="{% url 'booking_manage' booking.id 'reject' %}" class="btn btn-danger btn-sm">Відхилити</a>
-                        </div>
+                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                    <td class="p-4 text-white">{{ booking.start_time|date:"d.m H:i" }}</td>
+                    <td class="p-4">{{ booking.user.username }}</td>
+                    <td class="p-4 text-[#ff6600] font-semibold">{{ booking.computer.name }}</td>
+                    <td class="p-4">{{ booking.duration }} год</td>
+                    <td class="p-4 text-right space-x-3">
+                        <a href="{% url 'booking_manage' booking.id 'approve' %}" class="text-green-400 hover:text-green-300 text-xs uppercase tracking-wider">Підтвердити</a>
+                        <a href="{% url 'booking_manage' booking.id 'reject' %}" class="text-red-400 hover:text-red-300 text-xs uppercase tracking-wider">Відхилити</a>
                     </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="p-12 text-center text-[var(--muted)] font-mono">Немає заявок, що очікують</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-    {% else %}
-        <div class="alert alert-secondary">
-            Активних заявок на бронювання немає.
-        </div>
-    {% endif %}
 </div>
-{% endblock %}
+{% endblock content %}

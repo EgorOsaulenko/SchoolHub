@@ -1,74 +1,104 @@
 {% extends "base.html" %}
-{% load static %}
 
-{% block title %}Список комп'ютерів{% endblock title %}
+{% block title %}SchoolHub · Комп'ютери{% endblock title %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="text-center mb-4">Ігрові місця</h2>
-
-    {% if request.user.is_staff %}
-    <div class="text-center mb-3">
-        <a href="{% url 'booking_list' %}" class="btn btn-warning">Переглянути заявки на бронювання</a>
+<div class="max-w-6xl mx-auto fade-in">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight text-white brand-font mb-1">Статус систем</h1>
+            <p class="text-[var(--muted)] text-sm">Всього одиниць: {{ computers.count }}</p>
+        </div>
+        {% if user.is_authenticated and user.profile %}
+        <div class="flex items-center gap-4">
+            <div class="hud-panel neon-border rounded-lg px-4 py-2 flex items-center gap-2">
+                <span class="text-xs text-[var(--muted)] uppercase">Баланс</span>
+                <span class="text-lg font-bold text-white neon-text">{{ balance|default:"0.00" }} ₮</span>
+            </div>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
-    
-    <div class="d-flex justify-content-center gap-2 mb-4">
-        <button class="btn btn-primary filter-btn" data-filter="all">Всі</button>
-        {% for zone in zones %}
-        <button class="btn btn-outline-primary filter-btn" data-filter="{{ zone.name }}">{{ zone.name }}</button>
-        {% endfor %}
-    </div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {% for computer in computers %}
-        <div class="col computer-card" data-zone="{{ computer.zone.name }}">
-            <div class="card h-100 shadow-sm text-center">
-                <div class="card-header bg-transparent">
-                    <h5 class="card-title mb-0">{{ computer.name }}</h5>
-                </div>
-                <div class="card-body d-flex flex-column justify-content-center">
-                    <p class="card-text text-muted">Зона: {{ computer.zone }}</p>
-                    
-                    <div id="status-container-{{ computer.id }}">
-                        {% if computer.active_session %}
-                            <div class="alert alert-info py-2 mb-3">
-                                <small class="d-block text-muted">Гравець:</small>
-                                <strong>{{ computer.active_session.user.username }}</strong>
-                                <hr class="my-1">
-                                <small>Тариф: {{ computer.active_session.tariff.name }}</small><br>
-                                <small>Початок: {{ computer.active_session.start_time|date:"H:i" }}</small>
-                            </div>
-                            {% if request.user.is_staff %}
-                                <a href="{% url 'stop_session' computer.active_session.id %}" class="btn btn-danger w-100 mt-auto">Завершити сесію</a>
-                            {% endif %}
-                        {% else %}
-                            <div class="mb-3">
-                                {% if computer.status == "FR" %}
-                                    <span class="badge rounded-pill text-bg-success px-3 py-2">Вільний</span>
-                                {% else %}
-                                    <span class="badge rounded-pill text-bg-danger px-3 py-2">{{ computer.get_status_display }}</span>
-                                {% endif %}
-                            </div>
-                            {% if computer.status == "FR" %}
-                                {% if request.user.is_staff %}
-                                    <a href="{% url 'start_session' computer.id %}" class="btn btn-primary w-100 mt-auto">Відкрити сесію</a>
-                                {% else %}
-                                    <a href="{% url 'booking' computer.id %}" class="btn btn-success w-100 mt-auto">Забронювати</a>
-                                {% endif %}
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                </div>
+        <div class="hud-panel neon-border rounded-xl p-6 flex flex-col hover:border-[#ff6600]/40 transition-all group relative overflow-hidden">
+            <div class="absolute top-4 right-4">
+                {% if computer.status == 'FR' %}
+                <span class="w-3 h-3 bg-green-500 rounded-full block shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+                {% elif computer.status == 'BS' %}
+                <span class="w-3 h-3 bg-red-500 rounded-full block shadow-[0_0_8px_rgba(239,68,68,0.6)]"></span>
+                {% else %}
+                <span class="w-3 h-3 bg-yellow-500 rounded-full block shadow-[0_0_8px_rgba(234,179,8,0.6)]"></span>
+                {% endif %}
+            </div>
+
+            <h3 class="text-xl font-bold text-white mb-1 pr-8">{{ computer.name }}</h3>
+            <p class="text-[var(--muted)] text-xs uppercase tracking-wider mb-4">{{ computer.zone.name }}</p>
+
+            {% if computer.active_session %}
+            <div class="rounded-lg bg-black/40 p-3 border-l-2 border-[#ff6600] mb-4 font-mono text-sm">
+                <div class="text-[var(--muted)]">Користувач: <span class="text-white">{{ computer.active_session.user.username }}</span></div>
+                <div class="text-[var(--muted)]">Початок: <span class="text-[#ff6600]">{{ computer.active_session.start_time|date:"H:i" }}</span></div>
+            </div>
+            {% elif computer.active_booking %}
+            <div class="rounded-lg bg-black/40 p-3 border-l-2 border-yellow-500/70 mb-4 font-mono text-sm">
+                <div class="text-yellow-400/90">Заброньовано до {{ computer.active_booking.end_time|date:"H:i" }}</div>
+            </div>
+            {% else %}
+            <div class="h-16 flex items-center text-[var(--muted)] text-sm font-mono mb-4">Система вільна</div>
+            {% endif %}
+
+            <div class="mt-auto flex gap-2 flex-wrap">
+                {% if computer.status == 'FR' %}
+                <a href="{% url 'booking' computer.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold">Бронювати</a>
+                {% if is_staff %}
+                <a href="{% url 'start_session' computer.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-green-500/70 text-green-400 hover:bg-green-500 hover:text-black">Старт</a>
+                {% endif %}
+                {% elif computer.status == 'BS' and is_staff and computer.active_session %}
+                <a href="{% url 'stop_session' computer.active_session.id %}" class="cyber-btn w-full py-2 text-center rounded-lg text-sm font-semibold border-red-500/70 text-red-400 hover:bg-red-500 hover:text-black">Завершити</a>
+                {% endif %}
             </div>
         </div>
         {% empty %}
-        <div class="col-12 text-center text-muted">Комп'ютери ще не додані.</div>
+        <div class="col-span-full hud-panel neon-border rounded-xl p-12 text-center text-[var(--muted)]">
+            Немає доступних комп'ютерів
+        </div>
         {% endfor %}
     </div>
-</div>
 
-<script src="{% static 'TaskManager/js/computer_list_filter.js' %}"></script>
-<div id="computer-list-meta" data-has-permission="{{ request.user.is_staff|yesno:'true,false' }}" data-api-url="{% url 'computer_status_api' %}"></div>
-<script src="{% static 'TaskManager/js/computer_list_update.js' %}"></script>
+    {% if is_staff and pending_bookings %}
+    <div class="mt-12 hud-panel neon-border rounded-xl p-6">
+        <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <span class="text-[#ff6600]">///</span> Заявки на бронювання
+        </h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead>
+                    <tr class="text-[var(--muted)] text-xs uppercase tracking-wider border-b border-white/10">
+                        <th class="py-3">Час</th>
+                        <th class="py-3">Користувач</th>
+                        <th class="py-3">Система</th>
+                        <th class="py-3">Тривалість</th>
+                        <th class="py-3 text-right">Дія</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in pending_bookings %}
+                    <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                        <td class="py-3 text-white">{{ booking.start_time|date:"d.m H:i" }}</td>
+                        <td class="py-3">{{ booking.user.username }}</td>
+                        <td class="py-3 text-[#ff6600] font-semibold">{{ booking.computer.name }}</td>
+                        <td class="py-3">{{ booking.duration }} год</td>
+                        <td class="py-3 text-right space-x-2">
+                            <a href="{% url 'booking_manage' booking.id 'approve' %}" class="text-green-400 hover:text-green-300 text-xs uppercase">Підтвердити</a>
+                            <a href="{% url 'booking_manage' booking.id 'reject' %}" class="text-red-400 hover:text-red-300 text-xs uppercase">Відхилити</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
 {% endblock content %}

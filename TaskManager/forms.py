@@ -1,9 +1,14 @@
 from django import forms
+from django.contrib.auth.models import User
+from Profile.models import Profile
 
-from .models import Schedule
-
-
-class ScheduleForm(forms.ModelForm):
+class UserChangeForm(forms.ModelForm):
     class Meta:
-        model = Schedule
-        fields = "__all__"
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+class ProfileChangeForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+        exclude = ['user', 'balance']

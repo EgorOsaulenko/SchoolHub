@@ -1,12 +1,46 @@
 {% extends "base.html" %}
 
-{% block title %}Реєстрація в клубі{% endblock title %}
+{% block title %}SchoolHub · Реєстрація{% endblock title %}
+
 {% block content %}
-<h2 class="mb-3">Стати учасником клубу</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ sign_up_form.as_p }}
-    {{ profile_form.as_p }}
-    <button class="btn btn-success">Створити акаунт</button>
-</form>
+<div class="min-h-[60vh] flex items-center justify-center py-12 fade-in">
+    <div class="w-full max-w-lg">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold tracking-wider text-white brand-font">
+                Новий <span class="neon-text">користувач</span>
+            </h1>
+            <p class="text-[var(--muted)] text-sm mt-2">Створення облікового запису</p>
+        </div>
+
+        <div class="hud-panel neon-border rounded-xl p-8">
+            <form method="post" enctype="multipart/form-data" class="space-y-5">
+                {% csrf_token %}
+                {% for field in sign_up_form %}
+                <div>
+                    <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">{{ field.label }}</label>
+                    <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.name }}" id="id_{{ field.name }}" class="w-full rounded-lg px-4 py-3 cyber-input bg-black/50" placeholder="Введіть {{ field.label|lower }}..." {% if field.value %}value="{{ field.value }}"{% endif %} {% if field.field.required %}required{% endif %}>
+                    {% if field.errors %}<p class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</p>{% endif %}
+                </div>
+                {% endfor %}
+                {% for field in profile_form %}
+                <div>
+                    <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">{{ field.label }}</label>
+                    <div class="cyber-input rounded-lg px-4 py-3 w-full bg-black/50">
+                        {{ field }}
+                    </div>
+                    {% if field.errors %}<p class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</p>{% endif %}
+                </div>
+                {% endfor %}
+
+                <button type="submit" class="cyber-btn w-full py-3 rounded-lg font-semibold text-lg tracking-wider mt-6">
+                    Створити акаунт
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <a href="{% url 'sign_in' %}" class="text-[var(--muted)] hover:text-white text-sm transition-colors">Скасувати · Повернутися до входу</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

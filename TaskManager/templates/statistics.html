@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}SchoolHub · Статистика{% endblock title %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto fade-in">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <h1 class="text-3xl font-bold tracking-tight text-white brand-font">Особиста статистика</h1>
+        <div class="flex gap-4">
+            <a href="{% url 'profile' %}" class="text-[var(--muted)] hover:text-[#ff6600] text-sm transition-colors">Профіль</a>
+            <a href="{% url 'computer_list' %}" class="text-[var(--muted)] hover:text-[#ff6600] text-sm transition-colors">Повернутися</a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="hud-panel neon-border rounded-xl p-8 text-center">
+            <div class="text-xs text-[var(--muted)] uppercase tracking-widest mb-2">Загальний час</div>
+            <div class="text-4xl font-bold text-white brand-font">
+                {{ total_hours }} <span class="text-lg text-[var(--muted)]">год</span>
+            </div>
+        </div>
+
+        <div class="hud-panel neon-border rounded-xl p-8 text-center">
+            <div class="text-xs text-[var(--muted)] uppercase tracking-widest mb-2">Всього витрачено</div>
+            <div class="text-4xl font-bold text-[#ff6600] neon-text brand-font">
+                {{ total_spent }} <span class="text-lg text-[var(--muted)]">₮</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8 text-center text-[var(--muted)] text-sm">
+        Дані синхронізовано з сервером
+    </div>
+</div>
+{% endblock content %}

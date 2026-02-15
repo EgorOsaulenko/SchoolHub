@@ -1,11 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}Вхід у клуб{% endblock title %}
+{% block title %}SchoolHub · Вхід{% endblock title %}
+
 {% block content %}
-<h2 class="mb-3">Авторизація</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-primary">Увійти</button>
-</form>
+<div class="min-h-[60vh] flex items-center justify-center fade-in">
+    <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold tracking-wider text-white brand-font mb-2">
+                CYBER<span class="neon-text">CLUB</span>
+            </h1>
+            <p class="text-[var(--muted)] text-sm tracking-widest uppercase">Система контролю доступу</p>
+        </div>
+
+        <div class="hud-panel neon-border rounded-xl p-8">
+            <h2 class="text-xl font-semibold text-white mb-6 border-l-4 border-[#ff6600] pl-3 brand-font">Ідентифікація</h2>
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="text-red-400 text-sm border border-red-500/30 rounded-lg p-3 bg-red-500/5">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+                {% for field in form %}
+                <div>
+                    <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest" for="id_{{ field.name }}">{{ field.label }}</label>
+                    <div class="cyber-input rounded-lg w-full overflow-hidden">
+                        {{ field }}
+                    </div>
+                    {% if field.errors %}<p class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</p>{% endif %}
+                </div>
+                {% endfor %}
+
+                <button type="submit" class="cyber-btn w-full py-3 rounded-lg font-semibold text-lg tracking-wider mt-4">
+                    Увійти
+                </button>
+            </form>
+
+            <div class="mt-6 text-center border-t border-white/10 pt-4">
+                <p class="text-[var(--muted)] text-xs mb-2">Ще не зареєстровані?</p>
+                <a href="{% url 'sign_up' %}" class="text-[#ff6600] hover:text-white text-sm font-medium transition-colors border-b border-[#ff6600]/50 hover:border-white/50 pb-0.5">
+                    Зареєструватися
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
