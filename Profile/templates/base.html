@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#050505">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>{% block title %}SchoolHub · CyberClub{% endblock title %}</title>
     <style>
@@ -34,13 +34,14 @@
         .neon-text { color: var(--accent); text-shadow: 0 0 12px var(--accent-glow); }
         .hud-panel {
             background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             border: 1px solid var(--border);
-            box-shadow: 0 0 24px var(--accent-glow), inset 0 0 12px rgba(255,102,0,0.02);
+            box-shadow: 0 0 12px var(--accent-glow);
         }
         .neon-border {
             border: 1px solid var(--border);
-            box-shadow: 0 0 16px var(--accent-glow), inset 0 0 8px rgba(255,102,0,0.02);
+            box-shadow: 0 0 10px var(--accent-glow);
         }
         .cyber-btn {
             font-family: 'Share Tech Mono', monospace;
@@ -53,7 +54,7 @@
         .cyber-btn:hover {
             background: var(--accent);
             color: #000;
-            box-shadow: 0 0 20px var(--accent-glow);
+            box-shadow: 0 0 12px var(--accent-glow);
         }
         .cyber-btn:active { transform: scale(0.98); }
         .cyber-input, .cyber-input input, .cyber-input select, .cyber-input textarea {
@@ -72,8 +73,9 @@
         .nav-link { color: var(--muted); transition: color 0.2s; }
         .nav-link:hover, .nav-link.active { color: var(--accent); }
         .nav-link.active { border-top: 3px solid var(--accent); border-left: none; }
-        .fade-in { animation: fadeIn 0.3s ease-out; }
+        .fade-in { animation: fadeIn 0.2s ease-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .hud-panel, .neon-border { contain: layout style; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #0a0a0a; }
         ::-webkit-scrollbar-thumb { background: rgba(255,102,0,0.3); border-radius: 4px; }
@@ -96,15 +98,16 @@
     </div>
     {% endif %}
 
-    <header class="border-b border-white/5 bg-black/60 backdrop-blur-md sticky top-0 z-40">
+    <header class="border-b border-white/5 bg-black/80 sticky top-0 z-40">
         <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center h-16">
-                <a href="{% url 'index' %}" class="text-xl font-bold tracking-wider text-white brand-font hover:text-[#ff6600] transition-colors">
+            <div class="relative flex items-center justify-between h-16">
+                <a href="{% url 'index' %}" class="text-xl font-bold tracking-wider text-white brand-font hover:text-[#ff6600] transition-colors z-10">
                     CYBER<span class="neon-text">CLUB</span>
                 </a>
-                <nav class="flex items-center gap-1 flex-wrap justify-end">
+                <nav class="absolute left-1/2 -translate-x-1/2 flex items-center gap-1 flex-wrap justify-center">
                     {% include "navigation.html" %}
                 </nav>
+                <div class="w-[100px] shrink-0"></div>
             </div>
         </div>
     </header>
@@ -113,7 +116,6 @@
         {% block content %}{% endblock content %}
     </main>
 
-    <script src="{% static 'js/input.js' %}"></script>
     {% block extra_js %}{% endblock extra_js %}
 </body>
 </html>

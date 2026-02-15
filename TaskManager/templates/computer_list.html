@@ -13,7 +13,7 @@
         <div class="flex items-center gap-4">
             <div class="hud-panel neon-border rounded-lg px-4 py-2 flex items-center gap-2">
                 <span class="text-xs text-[var(--muted)] uppercase">Баланс</span>
-                <span class="text-lg font-bold text-white neon-text">{{ balance|default:"0.00" }} ₮</span>
+                <span class="text-lg font-bold text-white neon-text">{{ balance|floatformat:2 }} грн</span>
             </div>
         </div>
         {% endif %}

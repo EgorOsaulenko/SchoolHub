@@ -38,7 +38,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     positions = models.ManyToManyField(Position, blank=True, default=None)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Баланс (грн)")
-    avatar = models.ImageField(upload_to=".", verbose_name="Аватарка", null=True, blank=True, default=None)
+    avatar = models.ImageField(upload_to="avatars/%Y/%m/", verbose_name="Аватарка", null=True, blank=True, default=None)
     bio = models.TextField(verbose_name="Про себе", null=True, blank=True, default=None)
     phone_number = models.CharField(max_length=20, null=True, blank=True, default=None, verbose_name="Номер телефону", help_text="Введіть номер телефону")
 

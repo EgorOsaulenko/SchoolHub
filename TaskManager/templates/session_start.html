@@ -20,7 +20,7 @@
                     <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">Тариф</label>
                     <select name="tariff" class="cyber-input w-full rounded-lg px-4 py-3 bg-black/50">
                         {% for tariff in tariffs %}
-                        <option value="{{ tariff.id }}">{{ tariff.name }} ({{ tariff.price_per_hour }} ₮/год)</option>
+                        <option value="{{ tariff.id }}">{{ tariff.name }} ({{ tariff.price_per_hour|floatformat:2 }} грн/год)</option>
                         {% endfor %}
                     </select>
                 </div>

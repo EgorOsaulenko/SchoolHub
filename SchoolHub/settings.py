@@ -141,3 +141,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
+
+# Debug toolbar показується лише при ?dt=1 — прибирає зайве навантаження
+# Видаліть цей блок, щоб toolbar працював завжди
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": lambda r: DEBUG and r.GET.get("dt") == "1",
+}

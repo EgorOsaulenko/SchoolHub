@@ -64,20 +64,18 @@ def sign_in(request: HttpRequest):
 def update_profile(request: HttpRequest):
     if request.method == "POST":
         user_form = UserFormEdit(data=request.POST, instance=request.user)
-        if user_form.changed_data:
-            user_form.save()
-        
         profile_form = ProfileForm(data=request.POST, files=request.FILES, instance=request.user.profile)
-        if profile_form.changed_data:
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
             profile_form.save()
-        
-        messages.success(request, "Дані успішно оновлено")
-        return redirect("profile")
-    return render(
-        request,
-        "profile.html",
-        dict(user_form=UserFormEdit(instance=request.user), profile_form=ProfileForm(instance=request.user.profile))
-    )
+            messages.success(request, "Дані успішно оновлено")
+            return redirect("profile")
+        if profile_form.errors:
+            messages.error(request, "Помилка: перевірте аватар (формат, розмір)")
+    else:
+        user_form = UserFormEdit(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+    return render(request, "profile.html", dict(user_form=user_form, profile_form=profile_form))
 
 
 @login_required
