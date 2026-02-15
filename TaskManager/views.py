@@ -5,12 +5,14 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils import timezone
+import datetime
 from django.db.models import Sum
 from decimal import Decimal
 
 from .models import Computer, Session, Tariff, Payment, Zone, Booking
 # from .forms import SessionForm # Припускаємо, що форму ви оновите окремо
 from Booking.permissions import has_permission
+from Booking.models import Booking as AppBooking, Status as BookingStatus
 
 # Create your views here.
 
@@ -24,9 +26,40 @@ def computer_list_view(request: HttpRequest):
     active_sessions = Session.objects.filter(is_active=True).select_related('user', 'tariff')
     sessions_map = {s.computer_id: s for s in active_sessions}
 
+    # Отримуємо активні бронювання з обох систем
+    now = timezone.now()
+    bookings_map = {}
+
+    # 1. З додатку Booking
+    try:
+        busy_status = BookingStatus.objects.get(name="Busy")
+        app_bookings = AppBooking.objects.filter(
+            status=busy_status,
+            end_time__gt=now
+        ).select_related('computer')
+        for b in app_bookings:
+            bookings_map[b.computer_id] = b
+    except BookingStatus.DoesNotExist:
+        pass
+
+    # 2. З додатку TaskManager
+    # Фільтруємо кандидатів і перевіряємо в Python, оскільки end_time розраховується
+    yesterday = now - datetime.timedelta(days=1)
+    tm_bookings = Booking.objects.filter(
+        status='approved',
+        start_time__gt=yesterday
+    ).select_related('computer')
+
+    for b in tm_bookings:
+        b.end_time = b.start_time + datetime.timedelta(hours=b.duration)
+        if b.end_time > now:
+            if b.computer_id not in bookings_map:
+                bookings_map[b.computer_id] = b
+
     for comp in computers:
         comp.active_session = sessions_map.get(comp.id)
-        
+        comp.active_booking = bookings_map.get(comp.id)
+
     context = {"computers": computers, "zones": zones}
     if request.user.is_authenticated:
         if hasattr(request.user, 'profile'):
@@ -41,10 +74,40 @@ def computer_status_api(request: HttpRequest):
     computers = Computer.objects.all()
     active_sessions = Session.objects.filter(is_active=True).select_related('user', 'tariff')
     sessions_map = {s.computer_id: s for s in active_sessions}
-    
+
+    # Отримуємо активні бронювання з обох систем
+    now = timezone.now()
+    bookings_map = {}
+
+    # 1. З додатку Booking
+    try:
+        busy_status = BookingStatus.objects.get(name="Busy")
+        app_bookings = AppBooking.objects.filter(
+            status=busy_status,
+            end_time__gt=now
+        ).select_related('computer')
+        for b in app_bookings:
+            bookings_map[b.computer_id] = b
+    except BookingStatus.DoesNotExist:
+        pass
+
+    # 2. З додатку TaskManager
+    yesterday = now - datetime.timedelta(days=1)
+    tm_bookings = Booking.objects.filter(
+        status='approved',
+        start_time__gt=yesterday
+    ).select_related('computer')
+
+    for b in tm_bookings:
+        b.end_time = b.start_time + datetime.timedelta(hours=b.duration)
+        if b.end_time > now:
+            if b.computer_id not in bookings_map:
+                bookings_map[b.computer_id] = b
+
     data = []
     for comp in computers:
         session = sessions_map.get(comp.id)
+        booking = bookings_map.get(comp.id)
         session_info = None
         if session:
             session_info = {
@@ -53,12 +116,19 @@ def computer_status_api(request: HttpRequest):
                 "start_time": session.start_time.strftime("%H:%M"),
                 "id": session.id
             }
-            
+
+        booking_info = None
+        if booking and comp.status == Computer.StatusChoice.BOOKED:
+            booking_info = {
+                "end_time": booking.end_time.strftime("%H:%M %d.%m")
+            }
+
         data.append({
             "id": comp.id,
             "status": comp.status,
             "status_display": comp.get_status_display(),
-            "session": session_info
+            "session": session_info,
+            "booking": booking_info
         })
         
     return JsonResponse({"computers": data})
