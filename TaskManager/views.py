@@ -3,6 +3,40 @@ from django.contrib import messages
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.decorators import login_required
+# --- View для кнопки "Старт" на забронированном ПК ---
+@require_POST
+def admin_start_booking_session(request: HttpRequest, computer_id: int):
+    if not request.user.is_staff:
+        messages.error(request, "Тільки адміністратори можуть відкривати сесії.")
+        return redirect("computer_list")
+
+    computer = Computer.objects.get(id=computer_id)
+    booking = Booking.objects.filter(computer=computer, status='pending').first()
+    if not booking:
+        messages.error(request, "Немає активної броні для цього ПК.")
+        return redirect("computer_list")
+
+    # Проверка: если уже есть активная сессия
+    if Session.objects.filter(computer=computer, is_active=True).exists():
+        messages.error(request, "Сесія вже запущена.")
+        return redirect("computer_list")
+
+    Session.objects.create(
+        user=booking.user,
+        computer=computer,
+        tariff=None,
+        start_time=timezone.now(),
+        is_active=True
+    )
+    computer.status = Computer.StatusChoice.BUSY
+    computer.save()
+    booking.status = 'approved'
+    booking.save()
+    messages.success(request, f"Сесія запущена для {booking.user.username} на {computer.name}.")
+    return redirect("computer_list")
+
+
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils import timezone
 import datetime
@@ -110,6 +144,7 @@ def computer_list_view(request: HttpRequest):
         "total_hours": total_hours,
         "total_spent": total_spent,
         "pending_bookings": pending_bookings,
+        "my_bookings": Booking.objects.filter(user=request.user).order_by('start_time') if request.user.is_authenticated else None,
     }
 
     return render(request, "computer_list.html", context)
@@ -144,8 +179,6 @@ def computer_status_api(request: HttpRequest):
             "status_display": comp.get_status_display(),
             "session": session_info,
             "booking": booking_info,
-            "x_pos": comp.x_pos,
-            "y_pos": comp.y_pos
         })
         
     return JsonResponse({"computers": data})
@@ -191,6 +224,63 @@ def start_session(request: HttpRequest, computer_id: int):
     
     tariffs = Tariff.objects.all()
     return render(request, "session_start.html", {"computer": computer, "tariffs": tariffs})
+
+
+@has_permission("MS")
+def booking_start(request: HttpRequest, booking_id: int):
+    if not request.user.is_staff:
+        messages.error(request, "Тільки адміністратори можуть відкривати сесії.")
+        return redirect("computer_list")
+
+    # Try TaskManager Booking first
+    tm_booking = Booking.objects.filter(id=booking_id).select_related('computer', 'user').first()
+    app_booking = None
+    booking_obj = None
+
+    if tm_booking:
+        booking_obj = tm_booking
+        # only approved TM bookings may be started
+        if booking_obj.status != 'approved':
+            messages.error(request, "Бронювання ще не підтверджено.")
+            return redirect("computer_list")
+        computer = booking_obj.computer
+        booking_user = booking_obj.user
+    else:
+        # try external Booking app
+        app_booking = AppBooking.objects.filter(id=booking_id).select_related('computer', 'user', 'status').first()
+        if not app_booking:
+            messages.error(request, "Бронювання не знайдено.")
+            return redirect("computer_list")
+        # allow start if external booking has an approved/busy status
+        status_name = (app_booking.status.name if app_booking.status else '').lower()
+        if status_name not in ('busy', 'approved'):
+            messages.error(request, "Бронювання ще не підтверджено.")
+            return redirect("computer_list")
+        booking_obj = app_booking
+        computer = booking_obj.computer
+        booking_user = booking_obj.user
+
+    # Prevent starting if computer busy or under maintenance
+    if computer.status not in (Computer.StatusChoice.FREE, Computer.StatusChoice.BOOKED):
+        messages.error(request, "Цей комп'ютер зараз зайнятий або на обслуговуванні.")
+        return redirect("computer_list")
+
+    tariff = Tariff.objects.first()
+    if not tariff:
+        messages.error(request, "Немає налаштованих тарифів. Спочатку додайте тариф.")
+        return redirect("computer_list")
+
+    Session.objects.create(
+        user=booking_user,
+        computer=computer,
+        tariff=tariff
+    )
+
+    computer.status = Computer.StatusChoice.BUSY
+    computer.save()
+
+    messages.success(request, f"Сесію для {booking_user.username} розпочато.")
+    return redirect("computer_list")
 
 
 @has_permission("MS")
@@ -285,18 +375,75 @@ def booking_list_view(request: HttpRequest):
 def booking_manage(request: HttpRequest, booking_id: int, action: str):
     if not request.user.is_staff:
         return redirect("computer_list")
-        
-    booking = Booking.objects.get(id=booking_id)
-    
-    if action == 'approve':
-        booking.status = 'approved'
-        booking.save()
-        booking.computer.status = Computer.StatusChoice.BOOKED
-        booking.computer.save()
-        messages.success(request, f"Бронювання для {booking.user} підтверджено.")
-    elif action == 'reject':
-        booking.status = 'rejected'
-        booking.save()
-        messages.success(request, "Бронювання відхилено.")
-        
-    return redirect("booking_list")
+    # Try TaskManager Booking first
+    try:
+        tm_booking = Booking.objects.get(id=booking_id)
+        if action == 'approve':
+            tm_booking.status = 'approved'
+            tm_booking.save()
+            tm_booking.computer.status = Computer.StatusChoice.BOOKED
+            tm_booking.computer.save()
+            messages.success(request, f"Бронювання для {tm_booking.user} підтверджено.")
+        elif action == 'reject':
+            tm_booking.status = 'rejected'
+            tm_booking.save()
+            messages.success(request, "Бронювання відхилено.")
+        elif action == 'release':
+            tm_booking.status = 'rejected'
+            tm_booking.save()
+            tm_booking.computer.status = Computer.StatusChoice.FREE
+            tm_booking.computer.save()
+            messages.success(request, "Бронювання знято, система тепер вільна.")
+
+        if action in ('approve', 'reject'):
+            return redirect("booking_list")
+        return redirect("computer_list")
+    except Booking.DoesNotExist:
+        # Try external AppBooking
+        try:
+            ab = AppBooking.objects.select_related('computer', 'status').get(id=booking_id)
+        except AppBooking.DoesNotExist:
+            messages.error(request, "Бронювання не знайдено.")
+            return redirect("computer_list")
+
+        if action == 'approve':
+            try:
+                busy = BookingStatus.objects.get(name='Busy')
+                ab.status = busy
+            except BookingStatus.DoesNotExist:
+                ab.status = ab.status
+            ab.save()
+            ab.computer.status = Computer.StatusChoice.BOOKED
+            ab.computer.save()
+            messages.success(request, f"Бронювання для {ab.user} підтверджено.")
+        elif action == 'reject':
+            # try to find a rejected/cancel status
+            for name in ('Rejected', 'Cancelled', 'Canceled'):
+                try:
+                    s = BookingStatus.objects.get(name=name)
+                    ab.status = s
+                    break
+                except BookingStatus.DoesNotExist:
+                    continue
+            else:
+                ab.status = None
+            ab.save()
+            messages.success(request, "Бронювання відхилено.")
+        elif action == 'release':
+            for name in ('Rejected', 'Cancelled', 'Canceled'):
+                try:
+                    s = BookingStatus.objects.get(name=name)
+                    ab.status = s
+                    break
+                except BookingStatus.DoesNotExist:
+                    continue
+            else:
+                ab.status = None
+            ab.save()
+            ab.computer.status = Computer.StatusChoice.FREE
+            ab.computer.save()
+            messages.success(request, "Бронювання знято, система тепер вільна.")
+
+        if action in ('approve', 'reject'):
+            return redirect("booking_list")
+        return redirect("computer_list")
