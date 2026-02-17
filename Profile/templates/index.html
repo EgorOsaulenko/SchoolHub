@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}SchoolHub · Головна{% endblock title %}
+{% block title %}CyberClub · Головна{% endblock title %}
 
 {% block content %}
 <div class="max-w-5xl mx-auto fade-in">
@@ -8,7 +8,7 @@
         <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white brand-font mb-2">
             Вітаємо{% if user.is_authenticated %}, {{ user.username }}{% endif %}
         </h1>
-        <p class="text-[var(--muted)] text-base">SchoolHub · Керування комп'ютерним клубом</p>
+        <p class="text-[var(--muted)] text-base">CyberClub · Керування комп'ютерним клубом</p>
     </div>
 
     {% if user.is_authenticated %}

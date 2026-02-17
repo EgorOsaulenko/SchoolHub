@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import HttpRequest
@@ -39,10 +40,6 @@ def create_book(request: HttpRequest):
         book.status = Status.objects.filter(name="Waiting").first()
         book.save()
         
-        if book.computer:
-            book.computer.status = Computer.StatusChoice.BOOKED
-            book.computer.save()
-
         BookingLog.objects.create(booking=book, user=request.user, action="Створив бронювання")
         messages.success(request, "Комп'ютер заброньовано. Очікуйте підтвердження від адміністратора")
         return redirect("computer_list")
@@ -56,15 +53,12 @@ def update_book(request: HttpRequest, id: int):
     if form.is_valid():
         saved_book = form.save()
         
-        if saved_book.status and saved_book.status.name == "Busy":
+        if saved_book.status and (saved_book.status.name == "Busy" or saved_book.status.name == "Confirmed"):
             if saved_book.computer:
                 saved_book.computer.status = Computer.StatusChoice.BOOKED
                 saved_book.computer.save()
             name = "Підтвердив"
         else:
-            if saved_book.computer:
-                saved_book.computer.status = Computer.StatusChoice.FREE
-                saved_book.computer.save()
             name = "Відхилив"
 
         BookingLog.objects.create(booking=saved_book, user=request.user, action=name)
@@ -75,6 +69,18 @@ def update_book(request: HttpRequest, id: int):
 @has_permission("MB")
 @login_required
 def resources(request: HttpRequest):
+    # Автоматичне скасування прострочених заявок
+    waiting_status = Status.objects.filter(name="Waiting").first()
+    rejected_status = Status.objects.filter(name="Rejected").first()
+    
+    if waiting_status and rejected_status:
+        # Знаходимо заявки, час початку яких вже минув, а статус все ще "Waiting"
+        expired_bookings = Booking.objects.filter(status=waiting_status, start_time__lt=timezone.now())
+        for book in expired_bookings:
+            book.status = rejected_status
+            book.save()
+            BookingLog.objects.create(booking=book, user=request.user, action="Автоматично відхилено (прострочено)")
+
     bookings = Booking.objects.select_related('computer', 'status', 'user').all().order_by('-id')
     if not request.user.is_staff:
         bookings = bookings.filter(user=request.user)

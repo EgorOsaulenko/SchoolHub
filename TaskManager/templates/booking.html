@@ -1,43 +1,44 @@
 {% extends "base.html" %}
 
-{% block title %}SchoolHub · Бронювання{% endblock title %}
+{% block title %}CyberClub · Бронювання{% endblock %}
 
 {% block content %}
-<div class="min-h-[60vh] flex items-center justify-center fade-in">
-    <div class="w-full max-w-lg">
-        <div class="hud-panel neon-border rounded-xl p-8">
-            <h2 class="text-xl font-semibold text-white mb-6 border-l-4 border-[#ff6600] pl-3 brand-font">Нове бронювання</h2>
+<div class="max-w-md mx-auto mt-10 fade-in">
+    <div class="hud-panel neon-border rounded-xl p-6">
+        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <span class="text-[#ff6600]">///</span> Нове бронювання
+        </h2>
+        
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            <div>
+                <label class="block text-[var(--muted)] text-sm mb-2 font-mono">Комп'ютер</label>
+                <select name="computer" class="w-full bg-black border border-[#ff6600]/30 rounded-lg px-4 py-2 text-white focus:border-[#ff6600] focus:outline-none">
+                <select name="computer" class="w-full bg-black border border-[#ff6600]/30 rounded-lg px-4 py-2 text-gray-300 focus:border-[#ff6600] focus:outline-none">
+                    {% for computer in computers %}
+                    <option value="{{ computer.id }}" class="bg-black text-white" {% if selected_computer and selected_computer.id == computer.id %}selected{% endif %}>
+                    <option value="{{ computer.id }}" class="bg-black text-gray-300" {% if selected_computer and selected_computer.id == computer.id %}selected{% endif %}>
+                        {{ computer.name }} ({{ computer.zone.name }}) - {{ computer.get_status_display }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-            <form method="post" class="space-y-6">
-                {% csrf_token %}
-                <div>
-                    <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">Система</label>
-                    <select name="computer" class="cyber-input w-full rounded-lg px-4 py-3 bg-black/50">
-                        {% for comp in computers %}
-                        <option value="{{ comp.id }}" {% if selected_computer and selected_computer.id == comp.id %}selected{% endif %}>
-                            {{ comp.name }} ({{ comp.zone.name }})
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
+            <div>
+                <label class="block text-[var(--muted)] text-sm mb-2 font-mono">Час початку</label>
+                <input type="datetime-local" name="time" class="w-full bg-black/50 border border-[#ff6600]/30 rounded-lg px-4 py-2 text-white focus:border-[#ff6600] focus:outline-none" required>
+            </div>
 
-                <div>
-                    <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">Час початку</label>
-                    <input type="datetime-local" name="time" class="cyber-input w-full rounded-lg px-4 py-3 bg-black/50" required>
-                </div>
+            <div>
+                <label class="block text-[var(--muted)] text-sm mb-2 font-mono">Тривалість (год)</label>
+                <input type="number" name="duration" min="1" max="12" value="1" class="w-full bg-black/50 border border-[#ff6600]/30 rounded-lg px-4 py-2 text-white focus:border-[#ff6600] focus:outline-none" required>
+            </div>
 
-                <div>
-                    <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">Тривалість (год)</label>
-                    <input type="number" name="duration" min="1" max="24" value="1" class="cyber-input w-full rounded-lg px-4 py-3 bg-black/50" required>
-                </div>
-
-                <button type="submit" class="cyber-btn w-full py-3 rounded-lg font-semibold text-lg tracking-wider mt-4">
-                    Надіслати заявку
-                </button>
-            </form>
-
-            <a href="{% url 'computer_list' %}" class="block text-center mt-6 text-[var(--muted)] hover:text-white text-sm transition-colors">Скасувати</a>
-        </div>
+            <button type="submit" class="w-full cyber-btn py-3 rounded-lg font-bold text-lg mt-6 tracking-wider">
+                ПІДТВЕРДИТИ
+            </button>
+        </form>
     </div>
 </div>
-{% endblock content %}
+{% endblock %}

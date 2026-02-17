@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}SchoolHub · Комп'ютери{% endblock title %}
+{% block title %}CyberClub · Комп'ютери{% endblock title %}
 
 {% block content %}
 <div class="max-w-6xl mx-auto fade-in">
@@ -17,6 +17,19 @@
             </div>
         </div>
         {% endif %}
+    </div>
+
+    <div class="flex flex-wrap gap-3 mb-8">
+        <a href="{% url 'computer_list' %}" 
+           class="cyber-btn px-6 py-2 rounded-lg text-sm font-bold tracking-wider transition-all {% if not request.GET.zone %}bg-[#ff6600] text-black shadow-[0_0_15px_rgba(255,102,0,0.4)]{% else %}border border-[#ff6600]/50 text-[#ff6600] hover:bg-[#ff6600]/10{% endif %}">
+            ВСІ
+        </a>
+        {% for zone in zones %}
+        <a href="?zone={{ zone }}" 
+           class="cyber-btn px-6 py-2 rounded-lg text-sm font-bold tracking-wider transition-all {% if request.GET.zone == zone %}bg-[#ff6600] text-black shadow-[0_0_15px_rgba(255,102,0,0.4)]{% else %}border border-[#ff6600]/50 text-[#ff6600] hover:bg-[#ff6600]/10{% endif %}">
+            {{ zone }}
+        </a>
+        {% endfor %}
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -52,31 +65,40 @@
             {% elif computer.active_booking %}
             <div class="rounded-lg bg-black/40 p-3 border-l-2 border-yellow-500/70 mb-4 font-mono text-sm">
                 <div class="text-yellow-400/90">Заброньовано до {{ computer.active_booking.end_time|date:"H:i" }}</div>
-                {% if is_staff %}
-                <form method="post" action="{% url 'admin_start_booking_session' computer.id %}" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-success">Старт</button>
-                </form>
+            </div>
+            {% elif computer.status == 'FR' %}
+            <div class="h-16 flex items-center text-[var(--muted)] text-sm font-mono mb-4">Система вільна</div>
+            {% else %}
+            <div class="h-16 flex items-center text-[var(--muted)] text-sm font-mono mb-4">
+                {% if computer.status == 'BK' %}
+                Заброньовано
+                {% elif computer.status == 'BS' %}
+                Зайнятий
                 {% endif %}
             </div>
-            {% else %}
-            <div class="h-16 flex items-center text-[var(--muted)] text-sm font-mono mb-4">Система вільна</div>
             {% endif %}
 
             <div class="mt-auto flex gap-2 flex-wrap">
                 {% if computer.status == 'FR' %}
                 <a href="{% url 'booking' computer.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold">Бронювати</a>
-                {% if is_staff %}
+                {% if is_admin %}
                 <a href="{% url 'start_session' computer.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-green-500/70 text-green-400 hover:bg-green-500 hover:text-black">Старт</a>
                 {% endif %}
                 {% elif computer.status == 'BK' %}
-                    {% if is_staff and computer.active_booking %}
-                    <a href="{% url 'booking_start' computer.active_booking.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-green-500/70 text-green-400 hover:bg-green-500 hover:text-black">Старт</a>
+                    {% if is_admin and computer.active_booking %}
+                    <a href="{% url 'booking_start' computer.active_booking.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-green-500/70 text-green-400 hover:bg-green-500 hover:text-black">Бронь</a>
                     <a href="{% url 'booking_manage' computer.active_booking.id 'release' %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-red-500/70 text-red-400 hover:bg-red-500 hover:text-black">Отмена</a>
+                    {% elif is_admin %}
+                    <!-- Fallback if booking object missing but status is booked -->
+                    <a href="{% url 'start_session' computer.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-green-500/70 text-green-400 hover:bg-green-500 hover:text-black">Старт</a>
                     {% else %}
                     <button class="cyber-btn w-full py-2 text-center rounded-lg text-sm font-semibold opacity-60 cursor-not-allowed">Заброньовано</button>
                     {% endif %}
-                {% elif computer.status == 'BS' and is_staff and computer.active_session %}
+                    {% if is_admin and computer.active_booking %}
+                    <!-- Manual Start Override -->
+                    <a href="{% url 'start_session' computer.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-blue-500/70 text-blue-400 hover:bg-blue-500 hover:text-black">Старт</a>
+                    {% endif %}
+                {% elif computer.status == 'BS' and is_admin and computer.active_session %}
                 <a href="{% url 'stop_session' computer.active_session.id %}" class="cyber-btn w-full py-2 text-center rounded-lg text-sm font-semibold border-red-500/70 text-red-400 hover:bg-red-500 hover:text-black">Завершити</a>
                 {% endif %}
             </div>

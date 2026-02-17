@@ -102,10 +102,15 @@
         <div class="container mx-auto px-4">
             <div class="relative flex items-center justify-between h-16">
                 <a href="{% url 'index' %}" class="text-xl font-bold tracking-wider text-white brand-font hover:text-[#ff6600] transition-colors z-10">
-                    CYBER<span class="neon-text">CLUB</span>
+                    CYBERCLUB
                 </a>
-                <nav class="absolute left-1/2 -translate-x-1/2 flex items-center gap-1 flex-wrap justify-center">
-                    {% include "navigation.html" %}
+                <nav class="absolute left-1/3 top-1/3 -translate-x-1/3 -translate-y-1/3 flex items-center gap-1 flex-wrap justify-center">
+                    {% include "navigation.html" %} 
+                    {% if user.is_staff %}
+                        <a href="{% url 'staff_pc_management' %}" class="nav-link px-3 py-2 text-sm font-bold tracking-wider uppercase">
+                            Управління ПК
+                        </a>
+                    {% endif %}
                 </nav>
                 <div class="w-[100px] shrink-0"></div>
             </div>
