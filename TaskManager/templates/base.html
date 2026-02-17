@@ -1,0 +1,38 @@
+<style>
+    /* Глобальное исправление выпадающих списков и полей ввода */
+    select, input, textarea {
+        background-color: #050505 !important; /* Глубокий черный фон */
+        color: #e0e0e0 !important;           /* Читаемый светло-серый текст */
+        border: 1px solid #ff6600 !important; /* Твоя фирменная оранжевая рамка */
+        font-family: 'Share Tech Mono', monospace; /* Твой шрифт */
+        border-radius: 4px;
+        padding: 10px;
+    }
+
+    /* ФИКС: Делаем список снова выпадающим, а не раскрытым на весь экран */
+    select {
+        height: 45px !important; 
+        appearance: auto !important; /* Возвращает стрелочку выбора */
+        width: 100%;
+        cursor: pointer;
+    }
+
+    /* Стили для элементов внутри списка */
+    select option {
+        background-color: #0a0a0a !important; 
+        color: #e0e0e0 !important;
+        padding: 10px;
+    }
+
+    /* Цвет текста при наведении или выборе */
+    select option:checked {
+        background-color: #ff6600 !important;
+        color: #000000 !important;
+    }
+
+    /* Свечение при клике на поле */
+    select:focus, input:focus {
+        outline: none;
+        box-shadow: 0 0 10px rgba(255, 102, 0, 0.6);
+    }
+</style>

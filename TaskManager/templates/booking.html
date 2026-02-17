@@ -14,11 +14,9 @@
             
             <div>
                 <label class="block text-[var(--muted)] text-sm mb-2 font-mono">Комп'ютер</label>
-                <select name="computer" class="w-full bg-black border border-[#ff6600]/30 rounded-lg px-4 py-2 text-white focus:border-[#ff6600] focus:outline-none">
-                <select name="computer" class="w-full bg-black border border-[#ff6600]/30 rounded-lg px-4 py-2 text-gray-300 focus:border-[#ff6600] focus:outline-none">
+                <select name="computer" class="w-full bg-black border border-[#ff6600]/30 rounded-lg px-4 py-2 text-gray-400 focus:border-[#ff6600] focus:outline-none">
                     {% for computer in computers %}
-                    <option value="{{ computer.id }}" class="bg-black text-white" {% if selected_computer and selected_computer.id == computer.id %}selected{% endif %}>
-                    <option value="{{ computer.id }}" class="bg-black text-gray-300" {% if selected_computer and selected_computer.id == computer.id %}selected{% endif %}>
+                    <option value="{{ computer.id }}" class="bg-black text-gray-400" {% if selected_computer and selected_computer.id == computer.id %}selected{% endif %}>
                         {{ computer.name }} ({{ computer.zone.name }}) - {{ computer.get_status_display }}
                     </option>
                     {% endfor %}

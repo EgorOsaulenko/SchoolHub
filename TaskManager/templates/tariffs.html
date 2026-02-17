@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Тарифи та Характеристики{% endblock %}
+
+{% block content %}
+<div class="min-h-screen p-6 fade-in">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-4xl font-bold text-white tracking-wider mb-12 text-center brand-font">ТАРИФИ ТА ЗАЛІЗО</h1>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Standard PC -->
+            <div class="bg-[#121212] border border-gray-800 rounded-2xl overflow-hidden hover:border-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 flex flex-col">
+                <div class="h-2 bg-blue-500 w-full"></div>
+                <div class="p-8 flex-1 flex flex-col">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-white mb-2">🔵 Standard PC</h2>
+                        <div class="text-blue-400 text-3xl font-bold">70.00 <span class="text-lg text-gray-400 font-normal">грн/год</span></div>
+                    </div>
+                    
+                    <p class="text-gray-400 mb-8 leading-relaxed">
+                        Оптимальний вибір для кіберспорту. Ідеально підходить для CS2, Dota 2, Valorant та стабільного FPS.
+                    </p>
+                    
+                    <div class="space-y-4 mt-auto">
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Процесор</span>
+                                <span class="text-white font-medium">Intel Core i5-12400F / AMD Ryzen 5 5600</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Відеокарта</span>
+                                <span class="text-white font-medium">NVIDIA GeForce RTX 3060 12GB</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Оперативна пам'ять</span>
+                                <span class="text-white font-medium">16GB DDR4 3200MHz</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Монітор</span>
+                                <span class="text-white font-medium">24" Full HD, 144Hz / 165Hz</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Периферія</span>
+                                <span class="text-white font-medium">Механічна клавіатура та ігрова миша від HyperX або SteelSeries</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Console -->
+            <div class="bg-[#121212] border border-gray-800 rounded-2xl overflow-hidden hover:border-[#ff6600] hover:shadow-[0_0_20px_rgba(255,102,0,0.15)] transition-all duration-300 flex flex-col">
+                <div class="h-2 bg-[#ff6600] w-full"></div>
+                <div class="p-8 flex-1 flex flex-col">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-white mb-2">🟠 Console</h2>
+                        <div class="text-[#ff6600] text-3xl font-bold">100.00 <span class="text-lg text-gray-400 font-normal">грн/год</span></div>
+                    </div>
+                    
+                    <p class="text-gray-400 mb-8 leading-relaxed">
+                        Максимальний релакс. Зона з великим екраном для гри з друзями в FIFA, Mortal Kombat або ексклюзиви Sony.
+                    </p>
+                    
+                    <div class="space-y-4 mt-auto">
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Консоль</span>
+                                <span class="text-white font-medium">PlayStation 5 або Xbox Series X</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Екран</span>
+                                <span class="text-white font-medium">4K OLED TV 55"–65" з підтримкою 120Hz та HDR10+</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Аксесуари</span>
+                                <span class="text-white font-medium">2 геймпади DualSense / Xbox Wireless Controller</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Комфорт</span>
+                                <span class="text-white font-medium">Великий м'який диван та доступ до бібліотеки з 400+ ігор</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIP PC -->
+            <div class="bg-[#121212] border border-gray-800 rounded-2xl overflow-hidden hover:border-purple-500 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)] transition-all duration-300 flex flex-col">
+                <div class="h-2 bg-purple-500 w-full"></div>
+                <div class="p-8 flex-1 flex flex-col">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-white mb-2">🟣 VIP PC</h2>
+                        <div class="text-purple-400 text-3xl font-bold">120.00 <span class="text-lg text-gray-400 font-normal">грн/год</span></div>
+                    </div>
+                    
+                    <p class="text-gray-400 mb-8 leading-relaxed">
+                        Ультимативна потужність. Для тих, хто не звик до компромісів. Найкраще залізо для гри на ультра-налаштуваннях у 2K/4K.
+                    </p>
+                    
+                    <div class="space-y-4 mt-auto">
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Процесор</span>
+                                <span class="text-white font-medium">Intel Core i7-14700K / AMD Ryzen 7 7800X3D</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Відеокарта</span>
+                                <span class="text-white font-medium">NVIDIA GeForce RTX 4080 / 4090</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Оперативна пам'ять</span>
+                                <span class="text-white font-medium">32GB DDR5 6000MHz</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Монітор</span>
+                                <span class="text-white font-medium">27" Quad HD, 240Hz / 360Hz</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="text-gray-500 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
+                            </span>
+                            <div>
+                                <span class="block text-gray-500 text-xs uppercase tracking-wider">Периферія</span>
+                                <span class="text-white font-medium">Топові девайси Logitech G Pro X / Razer DeathAdder V3 та преміальне крісло</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

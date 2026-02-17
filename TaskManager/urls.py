@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from TaskManager.views import tariffs_view
 
 urlpatterns = [
     path('computers/', views.pc_list_view, name='computer_list'),
@@ -15,4 +16,5 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('management/computers/', views.staff_pc_management, name='staff_pc_management'),
     path('management/computers/auto-ip/', views.auto_assign_ips, name='auto_assign_ips'),
+    path('tariffs/', tariffs_view, name='tariffs'),
 ]

@@ -48,11 +48,13 @@ def pc_list_view(request: HttpRequest):
                 "status": c.status,
                 "zone": c.zone.name if c.zone else "",
                 "session": {
+                    "id": c.active_session.id,
                     "user": c.active_session.user.username if c.active_session else None,
                     "tariff": c.active_session.tariff.name if c.active_session and c.active_session.tariff else None,
                     "start_time": c.active_session.start_time.strftime("%H:%M") if c.active_session else None,
                 } if c.active_session else None,
                 "booking": {
+                    "id": c.active_booking.id,
                     "user": c.active_booking.user.username if c.active_booking else None,
                     "start_time": c.active_booking.start_time.strftime("%H:%M %d.%m") if c.active_booking else None,
                     "duration": c.active_booking.duration if c.active_booking else None,
@@ -261,6 +263,12 @@ def staff_pc_management(request: HttpRequest):
         return redirect("staff_pc_management")
 
     computers = Computer.objects.all().order_by('zone', 'name')
+    
+    # Завантажуємо активні сесії для відображення кнопки "Стоп"
+    session_map, _ = get_computer_status_map()
+    for comp in computers:
+        comp.active_session = session_map.get(comp.id)
+
     return render(request, "admin_pc_management.html", {
         "computers": computers,
         "status_choices": Computer.StatusChoice.choices
@@ -279,3 +287,6 @@ def auto_assign_ips(request: HttpRequest):
         
     messages.success(request, "IP-адреси успішно призначено (починаючи з 128.0.0.).")
     return redirect("staff_pc_management")
+
+def tariffs_view(request: HttpRequest):
+    return render(request, "tariffs.html")

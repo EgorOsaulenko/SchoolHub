@@ -82,6 +82,50 @@
         ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
         /* Django form widget overrides */
         .cyber-input input:not([type="file"]), .cyber-input select, .cyber-input textarea { border: none !important; background: transparent !important; }
+
+        /* Глобальное исправление выпадающих списков и полей ввода */
+        select, input, textarea {
+            background-color: #050505 !important; /* Глубокий черный фон */
+            color: #b0b0b0 !important;           /* Читаемый серый текст (чуть темнее) */
+            border: 1px solid #ff6600 !important; /* Твоя фирменная оранжевая рамка */
+            font-family: 'Share Tech Mono', monospace; /* Твой шрифт */
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        /* ФИКС: Делаем список снова выпадающим, а не раскрытым на весь экран */
+        select {
+            height: 45px !important; 
+            appearance: none !important; /* Прибираємо стандартний стиль браузера */
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            width: 100% !important;
+            cursor: pointer !important;
+            padding-right: 40px !important; /* Місце для стрілки */
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff6600' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 10px center !important;
+            background-size: 20px !important;
+        }
+
+        /* Стили для элементов внутри списка */
+        select option {
+            background-color: #0a0a0a !important; 
+            color: #b0b0b0 !important;
+            padding: 10px;
+        }
+
+        /* Цвет текста при наведении или выборе */
+        select option:checked {
+            background-color: #ff6600 !important;
+            color: #000000 !important;
+        }
+
+        /* Свечение при клике на поле */
+        select:focus, input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.6);
+        }
     </style>
     {% block extra_head %}{% endblock extra_head %}
 </head>
@@ -122,5 +166,14 @@
     </main>
 
     {% block extra_js %}{% endblock extra_js %}
+    <script>
+        // Примусово виправляємо відображення select, якщо браузер показує його як список
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll('select').forEach(s => {
+                s.removeAttribute('size');
+                s.style.height = '45px';
+            });
+        });
+    </script>
 </body>
 </html>

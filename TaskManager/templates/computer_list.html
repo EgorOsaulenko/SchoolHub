@@ -57,14 +57,10 @@
                 <div class="font-semibold text-red-400">Технічні роботи</div>
                 <div class="text-[var(--muted)] text-sm">Доступ до цієї системи тимчасово обмежений.</div>
             </div>
-            {% elif computer.active_session %}
+            {% elif computer.session %}
             <div class="rounded-lg bg-black/40 p-3 border-l-2 border-[#ff6600] mb-4 font-mono text-sm">
-                <div class="text-[var(--muted)]">Користувач: <span class="text-white">{{ computer.active_session.user.username }}</span></div>
-                <div class="text-[var(--muted)]">Початок: <span class="text-[#ff6600]">{{ computer.active_session.start_time|date:"H:i" }}</span></div>
-            </div>
-            {% elif computer.active_booking %}
-            <div class="rounded-lg bg-black/40 p-3 border-l-2 border-yellow-500/70 mb-4 font-mono text-sm">
-                <div class="text-yellow-400/90">Заброньовано до {{ computer.active_booking.end_time|date:"H:i" }}</div>
+                <div class="text-[var(--muted)]">Користувач: <span class="text-white">{{ computer.session.user }}</span></div>
+                <div class="text-[var(--muted)]">Початок: <span class="text-[#ff6600]">{{ computer.session.start_time }}</span></div>
             </div>
             {% elif computer.status == 'FR' %}
             <div class="h-16 flex items-center text-[var(--muted)] text-sm font-mono mb-4">Система вільна</div>
@@ -85,21 +81,27 @@
                 <a href="{% url 'start_session' computer.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-green-500/70 text-green-400 hover:bg-green-500 hover:text-black">Старт</a>
                 {% endif %}
                 {% elif computer.status == 'BK' %}
-                    {% if is_admin and computer.active_booking %}
-                    <a href="{% url 'booking_start' computer.active_booking.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-green-500/70 text-green-400 hover:bg-green-500 hover:text-black">Бронь</a>
-                    <a href="{% url 'booking_manage' computer.active_booking.id 'release' %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-red-500/70 text-red-400 hover:bg-red-500 hover:text-black">Отмена</a>
+                    {% if is_admin and computer.booking %}
+                    <a href="{% url 'booking_start' computer.booking.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-green-500/70 text-green-400 hover:bg-green-500 hover:text-black">Бронь</a>
+                    <a href="{% url 'admin_cancel_booking' computer.booking.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-red-500/70 text-red-400 hover:bg-red-500 hover:text-black">Отмена</a>
                     {% elif is_admin %}
                     <!-- Fallback if booking object missing but status is booked -->
                     <a href="{% url 'start_session' computer.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-green-500/70 text-green-400 hover:bg-green-500 hover:text-black">Старт</a>
                     {% else %}
-                    <button class="cyber-btn w-full py-2 text-center rounded-lg text-sm font-semibold opacity-60 cursor-not-allowed">Заброньовано</button>
+                    <div class="w-full py-2 text-center rounded-lg text-sm font-semibold border border-yellow-500/50 text-yellow-500 cursor-not-allowed bg-yellow-500/5">
+                        {% if computer.booking %}
+                        Заброньовано на {{ computer.booking.start_time }}
+                        {% else %}
+                        Заброньовано
+                        {% endif %}
+                    </div>
                     {% endif %}
-                    {% if is_admin and computer.active_booking %}
+                    {% if is_admin and computer.booking %}
                     <!-- Manual Start Override -->
                     <a href="{% url 'start_session' computer.id %}" class="cyber-btn flex-1 py-2 text-center rounded-lg text-sm font-semibold border-blue-500/70 text-blue-400 hover:bg-blue-500 hover:text-black">Старт</a>
                     {% endif %}
-                {% elif computer.status == 'BS' and is_admin and computer.active_session %}
-                <a href="{% url 'stop_session' computer.active_session.id %}" class="cyber-btn w-full py-2 text-center rounded-lg text-sm font-semibold border-red-500/70 text-red-400 hover:bg-red-500 hover:text-black">Завершити</a>
+                {% elif computer.status == 'BS' and is_admin and computer.session %}
+                <a href="{% url 'stop_session' computer.session.id %}" onclick="return confirm('Завершити сесію для {{ computer.session.user }}?')" class="cyber-btn w-full py-2 text-center rounded-lg text-sm font-semibold border-red-500/70 text-red-400 hover:bg-red-500 hover:text-black">Завершити</a>
                 {% endif %}
             </div>
         </div>
