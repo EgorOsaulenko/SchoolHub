@@ -1,6 +1,7 @@
 from django.contrib import admin, messages
 from django.urls import path, reverse
 from django.shortcuts import get_object_or_404, redirect
+from django.db import transaction
 from django.utils.html import format_html
 
 from .models import Zone, Tariff, Computer, Session, Payment, Booking
@@ -18,6 +19,8 @@ class BookingAdmin(admin.ModelAdmin):
 
 	def start_button(self, obj):
 		# Show button only when booking is not rejected and computer appears booked
+		if obj.status == 'approved':
+			return '-'
 		url = reverse('admin:taskmanager_booking_start_session', args=[obj.pk])
 		return format_html(
 			'<a class="button" href="{}">Старт</a>',
@@ -28,6 +31,12 @@ class BookingAdmin(admin.ModelAdmin):
 
 	def start_session_view(self, request, booking_id, *args, **kwargs):
 		booking = get_object_or_404(Booking, pk=booking_id)
+
+		# Перевірка, чи є у користувача вже активна сесія
+		if Session.objects.filter(user=booking.user, is_active=True).exists():
+			messages.error(request, f'Користувач {booking.user.username} вже має активну сесію.')
+			return redirect(request.META.get('HTTP_REFERER', reverse('admin:taskmanager_booking_changelist')))
+
 		# Prevent starting if computer already busy
 		computer = booking.computer
 		if computer.status == Computer.StatusChoice.BUSY:
@@ -35,12 +44,13 @@ class BookingAdmin(admin.ModelAdmin):
 			return redirect(request.META.get('HTTP_REFERER', reverse('admin:taskmanager_booking_changelist')))
 
 		# Create a session for the booking's user and computer
-		session = Session.objects.create(user=booking.user, computer=computer, tariff=None)
-		computer.status = Computer.StatusChoice.BUSY
-		computer.save()
-		# Mark booking as approved (started)
-		booking.status = 'approved'
-		booking.save()
+		with transaction.atomic():
+			session = Session.objects.create(user=booking.user, computer=computer, tariff=None)
+			computer.status = Computer.StatusChoice.BUSY
+			computer.save()
+			# Mark booking as approved (started)
+			booking.status = 'approved'
+			booking.save()
 
 		messages.success(request, f'Сесія запущена для {booking.user.username} на {computer.name}.')
 		return redirect(request.META.get('HTTP_REFERER', reverse('admin:taskmanager_booking_changelist')))

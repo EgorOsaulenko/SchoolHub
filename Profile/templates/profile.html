@@ -17,11 +17,13 @@
 {% block content %}
 <div class="max-w-3xl mx-auto fade-in">
     <div class="hud-panel neon-border rounded-xl p-8">
-        <form method="post" enctype="multipart/form-data" class="space-y-6" id="profile-form">
+        <form method="post" enctype="multipart/form-data" id="profile-form">
             {% csrf_token %}
-            <div class="flex flex-col sm:flex-row gap-8 mb-10 border-b border-white/10 pb-8">
-                <div class="shrink-0 self-start relative">
-                    <div id="avatar-preview" class="cursor-pointer group relative block w-28 h-28 rounded-xl overflow-hidden border-2 border-[#ff6600]/50 shadow-[0_0_24px_rgba(255,102,0,0.15)] hover:border-[#ff6600] transition-colors bg-black/60">
+            
+            <!-- Header Section -->
+            <div class="flex flex-col md:flex-row items-center gap-8 mb-10 border-b border-white/10 pb-8">
+                <div class="shrink-0 relative">
+                    <div id="avatar-preview" class="cursor-pointer group relative block w-32 h-32 rounded-xl overflow-hidden border-2 border-[#ff6600]/50 shadow-[0_0_24px_rgba(255,102,0,0.15)] hover:border-[#ff6600] transition-colors bg-black/60">
                         {% if user.profile.avatar %}
                         <img id="avatar-img" src="{{ user.profile.avatar.url }}" alt="Аватар" class="w-full h-full object-cover">
                         <div id="avatar-placeholder" class="hidden w-full h-full items-center justify-center text-4xl font-bold text-[#ff6600]"></div>
@@ -31,51 +33,57 @@
                         </div>
                         <img id="avatar-img" src="" alt="" class="hidden w-full h-full object-cover">
                         {% endif %}
+                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
                     </div>
-                    <span class="absolute bottom-0 right-0 text-[10px] text-[var(--muted)] bg-black/80 px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">Натисніть щоб змінити</span>
                 </div>
                 <input type="file" name="avatar" id="id_avatar" accept="image/*" class="hidden">
-                <div class="flex flex-col justify-center">
-                    <div class="text-xs text-[var(--muted)] uppercase tracking-widest mb-1">ID: {{ user.id|stringformat:"04d" }}</div>
-                    <h2 class="text-2xl font-bold text-white brand-font mb-2">{{ user.username }}</h2>
+                
+                <div class="flex-1 text-center md:text-left space-y-2">
+                    <h2 class="text-3xl font-bold text-white brand-font tracking-wide">{{ user.username }}</h2>
+                    <div class="text-xs text-[var(--muted)] uppercase tracking-widest">ID користувача: #{{ user.id|stringformat:"04d" }}</div>
                     {% if user.profile %}
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#ff6600]/30 bg-[#ff6600]/5 w-fit">
+                    <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-lg border border-[#ff6600]/30 bg-[#ff6600]/5 mt-2">
                         <span class="text-xs text-[#ff6600] uppercase tracking-wider">Баланс:</span>
-                        <span class="text-lg font-bold text-white neon-text">{{ user.profile.balance|floatformat:2 }} грн</span>
+                        <span class="text-xl font-bold text-white neon-text">{{ user.profile.balance|floatformat:2 }} грн</span>
                     </div>
                     {% endif %}
                 </div>
             </div>
 
-            {% for field in profile_form %}
-            {% if field.name == 'avatar' and False %}{{ field }}{% endif %}
-            {% endfor %}
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column: Personal Info (Stacked) -->
+                <div class="lg:col-span-1 space-y-6">
+                    <h3 class="text-lg font-semibold text-white border-l-4 border-[#ff6600] pl-3 brand-font">Особисті дані</h3>
+                    {% for field in user_form %}
+                    <div>
+                        <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">{{ field.label }}</label>
+                        <div class="cyber-input rounded-lg w-full overflow-hidden">{{ field }}</div>
+                        {% if field.errors %}<p class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</p>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {% for field in user_form %}
-                <div>
-                    <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">{{ field.label }}</label>
-                    <div class="cyber-input rounded-lg px-4 py-3 w-full">
-                        {{ field }}
+                <!-- Right Column: Profile Details -->
+                <div class="lg:col-span-2 space-y-6">
+                    <h3 class="text-lg font-semibold text-white border-l-4 border-[#ff6600] pl-3 brand-font">Деталі профілю</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {% for field in profile_form %}
+                        {% if field.name != 'avatar' %}
+                        <div class="{% if field.name == 'bio' or field.name == 'address' %}md:col-span-2{% endif %}">
+                            <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">{{ field.label }}</label>
+                            <div class="cyber-input rounded-lg w-full overflow-hidden">{{ field }}</div>
+                            {% if field.errors %}<p class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</p>{% endif %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
                     </div>
-                    {% if field.errors %}<p class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</p>{% endif %}
                 </div>
-                {% endfor %}
-                {% for field in profile_form %}
-                {% if field.name != 'avatar' %}
-                <div>
-                    <label class="block text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">{{ field.label }}</label>
-                    <div class="cyber-input rounded-lg px-4 py-3 w-full">
-                        {{ field }}
-                    </div>
-                    {% if field.errors %}<p class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</p>{% endif %}
-                </div>
-                {% endif %}
-                {% endfor %}
             </div>
 
-            <div class="pt-6 flex justify-end">
-                <button type="submit" class="cyber-btn px-10 py-3 rounded-lg font-semibold tracking-wider">
+            <div class="pt-8 flex justify-end border-t border-white/10 mt-8">
+                <button type="submit" class="cyber-btn px-10 py-3 rounded-lg font-semibold tracking-wider text-lg">
                     Зберегти зміни
                 </button>
             </div>

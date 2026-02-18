@@ -120,6 +120,11 @@ def admin_start_booking_session(request: HttpRequest, booking_id: int):
     if not booking:
         messages.error(request, "Бронювання не знайдено або не підтверджено.")
         return redirect("computer_list")
+
+    if Session.objects.filter(user=booking.user, is_active=True).exists():
+        messages.error(request, f"Користувач {booking.user.username} вже має активну сесію.")
+        return redirect("computer_list")
+
     computer = booking.computer
     if computer.status != STATUS_BOOKED:
         messages.error(request, "Комп'ютер не заброньовано.")
@@ -154,6 +159,10 @@ def computer_start_session(request: HttpRequest, computer_id: int):
             messages.error(request, "Невірні дані користувача або тарифу.")
             return redirect('computer_start_session', computer_id=computer.id)
             
+        if Session.objects.filter(user=user, is_active=True).exists():
+            messages.error(request, f"Користувач {user.username} вже має активну сесію.")
+            return redirect('computer_list')
+
         if Session.objects.filter(computer=computer, is_active=True).exists():
             messages.error(request, "Комп'ютер вже зайнятий.")
             return redirect('computer_list')

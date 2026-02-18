@@ -1,16 +1,16 @@
 {% load permissions %}
 {% with request.resolver_match.url_name as url_name %}
-<a href="{% url 'index' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'index' %}active{% endif %}">Головна</a>
+<a href="{% url 'index' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 whitespace-nowrap {% if url_name == 'index' %}active{% endif %}">Головна</a>
 {% if request.user.is_authenticated %}
-<a href="{% url 'profile' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'profile' %}active{% endif %}">Профіль</a>
-<a href="{% url 'tariffs' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'tariffs' %}active{% endif %}">Тарифи</a>
-<a href="{% url 'create_book' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'create_book' %}active{% endif %}">Забронювати</a>
-<a href="{% url 'resource' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'resource' %}active{% endif %}">Мої бронювання</a>
-<a href="{% url 'computer_list' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'computer_list' %}active{% endif %}">Комп'ютери</a>
-<a href="{% url 'statistics' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'statistics' %}active{% endif %}">Статистика</a>
-<a href="{% url 'logout_view' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 text-red-400/80 hover:text-red-400">Вихід</a>
+<a href="{% url 'profile' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 whitespace-nowrap {% if url_name == 'profile' %}active{% endif %}">Профіль</a>
+<a href="{% url 'tariffs' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 whitespace-nowrap {% if url_name == 'tariffs' %}active{% endif %}">Тарифи</a>
+<a href="{% url 'create_book' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 whitespace-nowrap {% if url_name == 'create_book' %}active{% endif %}">Забронювати</a>
+<a href="{% url 'resource' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 whitespace-nowrap {% if url_name == 'resource' %}active{% endif %}">Мої бронювання</a>
+<a href="{% url 'computer_list' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 whitespace-nowrap {% if url_name == 'computer_list' %}active{% endif %}">Комп'ютери</a>
+<a href="{% url 'statistics' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 whitespace-nowrap {% if url_name == 'statistics' %}active{% endif %}">Статистика</a>
+<a href="{% url 'logout_view' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 text-red-400/80 hover:text-red-400 whitespace-nowrap">Вихід</a>
 {% else %}
-<a href="{% url 'sign_in' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'sign_in' %}active{% endif %}">Вхід</a>
-<a href="{% url 'sign_up' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 {% if url_name == 'sign_up' %}active{% endif %}">Реєстрація</a>
+<a href="{% url 'sign_in' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 whitespace-nowrap {% if url_name == 'sign_in' %}active{% endif %}">Вхід</a>
+<a href="{% url 'sign_up' %}" class="nav-link px-3 py-2 rounded-md hover:bg-white/5 pt-2 whitespace-nowrap {% if url_name == 'sign_up' %}active{% endif %}">Реєстрація</a>
 {% endif %}
 {% endwith %}
