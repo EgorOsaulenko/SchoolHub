@@ -85,7 +85,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
-GOOGLE_REDIRECT_URI = "http://127.0.0.1:8000/profile/google/callback/"
+GOOGLE_REDIRECT_URI = os.getenv('GOOGLE_REDIRECT_URI', 'https://cyberclub.onrender.com/accounts/google/login/callback/')
 
 MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
